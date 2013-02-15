@@ -107,13 +107,12 @@ class Rake::RemoteTask < Rake::Task
   # RemoteTask.
 
   def execute(args = nil)
-    raise(Rake::ConfigurationError,
-          "No target hosts specified on task #{self.name} for roles #{options[:roles].inspect}") unless
-      defined_target_hosts?
-
-    super args
-
-    @remote_actions.each { |act| act.execute(target_hosts, self, args) }
+    if defined_target_hosts?
+      super args
+      @remote_actions.each { |act| act.execute(target_hosts, self, args) }
+    else
+      puts "No target hosts specified on task #{self.name} for roles #{options[:roles].inspect} - SKIPPING"
+    end
   end
 
   ##
